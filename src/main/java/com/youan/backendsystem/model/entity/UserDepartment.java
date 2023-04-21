@@ -24,12 +24,12 @@ public class UserDepartment implements Serializable {
     /**
      * 用户id
      */
-    private String userId;
+    private Long userId;
 
     /**
      * 部门id
      */
-    private String departmentId;
+    private Long departmentId;
 
     /**
      * 创建时间

@@ -3,6 +3,7 @@ package com.youan.backendsystem.service.impl;
 import static com.youan.backendsystem.constant.UserConstant.USER_LOGIN_STATE;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.youan.backendsystem.common.ErrorCode;
@@ -11,15 +12,21 @@ import com.youan.backendsystem.exception.BusinessException;
 import com.youan.backendsystem.mapper.UserMapper;
 import com.youan.backendsystem.model.dto.user.UserQueryRequest;
 import com.youan.backendsystem.model.entity.User;
+import com.youan.backendsystem.model.entity.UserDepartment;
 import com.youan.backendsystem.model.enums.UserRoleEnum;
 import com.youan.backendsystem.model.vo.LoginUserVO;
 import com.youan.backendsystem.model.vo.UserVO;
+import com.youan.backendsystem.service.UserDepartmentService;
 import com.youan.backendsystem.service.UserService;
 import com.youan.backendsystem.utils.SqlUtils;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +42,10 @@ import org.springframework.util.DigestUtils;
 @Service
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    @Resource
+    private UserDepartmentService userDepartmentService;
+
 
     /**
      * 盐值，混淆密码
@@ -239,9 +250,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean saveUser(User user) {
-        save(user);
+        boolean result1 = save(user);
         // 保存用户到用户部门关系表中
+        Long userId = user.getId();
+        Long departmentId = user.getDepartmentId();
+        UserDepartment userDepartment = new UserDepartment();
+        userDepartment.setUserId(userId);
+        userDepartment.setDepartmentId(departmentId);
+        boolean result2 = userDepartmentService.save(userDepartment);
+        return result1 && result2;
+    }
 
-        return false;
+    @Override
+    public boolean updateUserInfo(User user) {
+        // 判断更新用户是否有修改密码
+        String userPassword = user.getUserPassword();
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("id", user.getId());
+        User oldUser = getOne(userQueryWrapper);
+        if (userPassword == null) {
+            user.setUserPassword(oldUser.getUserPassword());
+        }
+        // 更新用户部门关系表
+        // 判断当前用户所属部门是否发生改变
+        boolean result1 = true;
+        QueryWrapper<UserDepartment> userDepartmentQueryWrapper = new QueryWrapper<>();
+        if (user.getDepartmentId() != oldUser.getDepartmentId()) {
+            userDepartmentQueryWrapper.eq("userId", oldUser.getId());
+            userDepartmentQueryWrapper.eq("departmentId", oldUser.getDepartmentId());
+            UserDepartment oldUserDepartment = userDepartmentService.getOne(userDepartmentQueryWrapper);
+            oldUserDepartment.setDepartmentId(user.getDepartmentId());
+            result1 = userDepartmentService.updateById(oldUserDepartment);
+        }
+        boolean result2 = updateById(user);
+        return result1 && result2;
     }
 }

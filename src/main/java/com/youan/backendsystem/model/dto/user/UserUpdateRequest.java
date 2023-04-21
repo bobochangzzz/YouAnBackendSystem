@@ -1,6 +1,7 @@
 package com.youan.backendsystem.model.dto.user;
 
 import java.io.Serializable;
+
 import lombok.Data;
 
 /**
@@ -22,19 +23,20 @@ public class UserUpdateRequest implements Serializable {
     private String userName;
 
     /**
-     * 用户头像
+     * 部门id
      */
-    private String userAvatar;
+    private Long departmentId;
 
     /**
-     * 简介
+     * 联系电话
      */
-    private String userProfile;
+    private String phone;
 
     /**
-     * 用户角色：user/admin/ban
+     * 用户密码
      */
-    private String userRole;
+    private String userPassword;
+
 
     private static final long serialVersionUID = 1L;
 }

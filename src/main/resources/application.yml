@@ -17,7 +17,7 @@ spring:
   # 数据库配置
   # todo 需替换配置
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://120.76.202.229:3306/my_db
     username: root
     password: 123456
