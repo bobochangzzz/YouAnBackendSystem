@@ -8,7 +8,6 @@ import com.youan.backendsystem.model.vo.LoginUserVO;
 import com.youan.backendsystem.model.vo.UserVO;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 
 /**
  * 用户服务
@@ -110,4 +109,10 @@ public interface UserService extends IService<User> {
      */
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 
+    /**
+     * 新建用户
+     * @param user
+     * @return
+     */
+    boolean saveUser(User user);
 }

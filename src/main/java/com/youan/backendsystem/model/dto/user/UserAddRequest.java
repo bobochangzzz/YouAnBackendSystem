@@ -13,24 +13,25 @@ import lombok.Data;
 public class UserAddRequest implements Serializable {
 
     /**
+     * 用户账号
+     */
+    private String userAccount;
+
+    /**
+     * 联系电话
+     */
+    private String phone;
+
+    /**
      * 用户昵称
      */
     private String userName;
 
     /**
-     * 账号
+     * 部门Id
      */
-    private String userAccount;
+    private Long departmentId;
 
-    /**
-     * 用户头像
-     */
-    private String userAvatar;
-
-    /**
-     * 用户角色: user, admin
-     */
-    private String userRole;
 
     private static final long serialVersionUID = 1L;
 }

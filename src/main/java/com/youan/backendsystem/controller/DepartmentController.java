@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户接口
@@ -115,6 +116,7 @@ public class DepartmentController {
         return ResultUtils.success(userPage);
     }
 
+    // todo 所有部门展示（子列表方式全部展示）
 
     // endregion
 
