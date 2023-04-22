@@ -27,7 +27,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             Integer status = permissionQueryRequest.getStatus();
             String icon = permissionQueryRequest.getIcon();
             String compoent = permissionQueryRequest.getCompoent();
-            String permissionvalue = permissionQueryRequest.getPermissionvalue();
+            String permissionvalue = permissionQueryRequest.getPermissionValue();
             String path = permissionQueryRequest.getPath();
             QueryWrapper<Permission> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq(StringUtils.isNotBlank(name), "name", name);

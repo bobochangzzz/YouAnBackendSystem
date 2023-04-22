@@ -37,7 +37,7 @@ public class Permission implements Serializable {
     /**
      * 权限值
      */
-    private String permissionvalue;
+    private String permissionValue;
 
     /**
      * 访问路径
@@ -63,17 +63,17 @@ public class Permission implements Serializable {
      *是否删除
      */
     @TableLogic
-    private Integer isdelete;
+    private Integer isDelete;
 
     /**
      *创建时间
      */
-    private Date createtime;
+    private Date createTime;
 
     /**
      *更新时间
      */
-    private Date updatetime;
+    private Date updateTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

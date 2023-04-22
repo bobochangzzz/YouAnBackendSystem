@@ -48,7 +48,7 @@ public class PermissionQueryRequest extends PageRequest implements Serializable 
     /**
      * 菜单权限值
      */
-    private String permissionvalue;
+    private String permissionValue;
 
     /**
      * 组件路径

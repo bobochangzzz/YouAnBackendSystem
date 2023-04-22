@@ -46,7 +46,7 @@ public class PermissionUpdateRequest implements Serializable {
     /**
      * 菜单权限值
      */
-    private String permissionvalue;
+    private String permissionValue;
 
     /**
      * 组件路径
