@@ -1,13 +1,11 @@
-package com.youan.backendsystem.model.dto.perimission;
+package com.youan.backendsystem.model.dto.menu;
 
-
-import com.youan.backendsystem.common.PageRequest;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class PermissionQueryRequest extends PageRequest implements Serializable {
+public class MenuUpdateRequest implements Serializable {
 
     /**
      * id
@@ -55,6 +53,6 @@ public class PermissionQueryRequest extends PageRequest implements Serializable 
      */
     private String compoent;
 
+
+
 }
-
-

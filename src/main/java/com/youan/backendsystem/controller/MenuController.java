@@ -9,11 +9,11 @@ import com.youan.backendsystem.common.ResultUtils;
 import com.youan.backendsystem.constant.UserConstant;
 import com.youan.backendsystem.exception.BusinessException;
 import com.youan.backendsystem.exception.ThrowUtils;
-import com.youan.backendsystem.model.dto.perimission.PermissionAddRequest;
-import com.youan.backendsystem.model.dto.perimission.PermissionQueryRequest;
-import com.youan.backendsystem.model.dto.perimission.PermissionUpdateRequest;
-import com.youan.backendsystem.model.entity.Permission;
-import com.youan.backendsystem.service.PermissionService;
+import com.youan.backendsystem.model.dto.menu.MenuAddRequest;
+import com.youan.backendsystem.model.dto.menu.MenuQueryRequest;
+import com.youan.backendsystem.model.dto.menu.MenuUpdateRequest;
+import com.youan.backendsystem.model.entity.Menu;
+import com.youan.backendsystem.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,68 +31,68 @@ import javax.servlet.http.HttpServletRequest;
  * @description 菜单管理模块
  */
 @RestController
-@RequestMapping("/permission")
+@RequestMapping("/menu")
 @Slf4j
-public class PermissionController {
+public class MenuController {
 
     @Resource
-    private PermissionService permissionService;
+    private MenuService menuService;
 
     /**
      * 分页获取菜单列表
      *
-     * @param PermissionQueryRequest
+     * @param MenuQueryRequest
      * @param request
      * @return
      */
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<Permission>> listPermissionByPage(@RequestBody PermissionQueryRequest permissionQueryRequest,
-                                                               HttpServletRequest request) {
-        long current = permissionQueryRequest.getCurrent();
-        long size = permissionQueryRequest.getPageSize();
-        Page<Permission> permissionPage = permissionService.page(new Page<>(current, size),
-                permissionService.getQueryWrapper(permissionQueryRequest));
-        return ResultUtils.success(permissionPage);
+    public BaseResponse<Page<Menu>> listMenuByPage(@RequestBody MenuQueryRequest menuQueryRequest,
+                                                         HttpServletRequest request) {
+        long current = menuQueryRequest.getCurrent();
+        long size = menuQueryRequest.getPageSize();
+        Page<Menu> menuPage = menuService.page(new Page<>(current, size),
+                menuService.getQueryWrapper(menuQueryRequest));
+        return ResultUtils.success(menuPage);
     }
 
     /**
      * 添加菜单
      *
-     * @param permissionAddRequest
+     * @param menuAddRequest
      * @param request
      * @return
      */
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Long> addPermission(@RequestBody PermissionAddRequest permissionAddRequest, HttpServletRequest request) {
-        if (permissionAddRequest == null) {
+    public BaseResponse<Long> addMenu(@RequestBody MenuAddRequest menuAddRequest, HttpServletRequest request) {
+        if (menuAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Permission permission = new Permission();
-        BeanUtils.copyProperties(permissionAddRequest, permission);
-        boolean result = permissionService.save(permission);
+        Menu menu = new Menu();
+        BeanUtils.copyProperties(menuAddRequest, menu);
+        boolean result = menuService.save(menu);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-        return ResultUtils.success(permission.getId());
+        return ResultUtils.success(menu.getId());
     }
 
     /**
      * 根据菜单id更新菜单信息
      *
-     * @param permissionUpdateRequest
+     * @param menuUpdateRequest
      * @param request
      * @return
      */
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> updatePermission(@RequestBody PermissionUpdateRequest permissionUpdateRequest,
+    public BaseResponse<Boolean> updateMenu(@RequestBody MenuUpdateRequest menuUpdateRequest,
                                             HttpServletRequest request) {
-        if (permissionUpdateRequest == null || permissionUpdateRequest.getId() == null) {
+        if (menuUpdateRequest == null || menuUpdateRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Permission permission = new Permission();
-        BeanUtils.copyProperties(permissionUpdateRequest, permission);
-        boolean result = permissionService.updateById(permission);
+        Menu menu = new Menu();
+        BeanUtils.copyProperties(menuUpdateRequest, menu);
+        boolean result = menuService.updateById(menu);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
@@ -105,11 +105,11 @@ public class PermissionController {
      */
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> deletePermission(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> deleteMenu(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean b = permissionService.removeById(deleteRequest.getId());
+        boolean b = menuService.removeById(deleteRequest.getId());
         return ResultUtils.success(b);
     }
 }

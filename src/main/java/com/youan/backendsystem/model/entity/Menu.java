@@ -8,11 +8,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @TableName permission菜单
+ * @TableName menu菜单
  */
-@TableName(value = "permission")
+@TableName(value = "menu")
 @Data
-public class Permission implements Serializable {
+public class Menu implements Serializable {
     /**
      *id
      */

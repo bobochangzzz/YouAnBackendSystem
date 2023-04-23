@@ -1,11 +1,11 @@
-package com.youan.backendsystem.model.dto.perimission;
+package com.youan.backendsystem.model.dto.menu;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class PermissionAddRequest implements Serializable {
+public class MenuAddRequest implements Serializable {
 
 
     /**
