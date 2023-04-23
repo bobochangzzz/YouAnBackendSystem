@@ -8,7 +8,7 @@
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="parentId" column="parentId" jdbcType="BIGINT"/>
         <result property="departmentName" column="departmentName" jdbcType="VARCHAR"/>
-        <result property="departmentHead" column="departmentHead" jdbcType="VARCHAR"/>
+        <result property="departmentHeadId" column="departmentHeadId" jdbcType="BIGINT"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="TINYINT"/>
@@ -18,7 +18,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,parntId,deparmentName,departmentHead,
+        id,parntId,deparmentName,departmentHeadId,
         phone,email,status,
         createTime,updateTime,isDelete
     </sql>

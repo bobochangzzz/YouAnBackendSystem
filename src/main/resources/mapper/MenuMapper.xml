@@ -11,7 +11,7 @@
         <result property="type" column="type" jdbcType="VARCHAR"/>
         <result property="permissionValue" column="permissionvalue" jdbcType="VARCHAR"/>
         <result property="path" column="path" jdbcType="VARCHAR"/>
-        <result property="compoent" column="compoent" jdbcType="VARCHAR"/>
+        <result property="component" column="component" jdbcType="VARCHAR"/>
         <result property="icon" column="icon" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="TINYINT"/>
         <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
@@ -21,7 +21,7 @@
 
     <sql id="Base_Column_List">
         id,pid,
-        name,type,permissionValue,path,compoent,icon,status,isDelete,
+        name,type,permissionValue,path,component,icon,status,isDelete,
         createTime,updateTime
     </sql>
 </mapper>

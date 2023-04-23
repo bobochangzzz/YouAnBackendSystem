@@ -72,7 +72,7 @@ public class DepartmentController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean b = departmentService.removeById(deleteRequest.getId());
+        boolean b = departmentService.removeDepartment(deleteRequest.getId());
         return ResultUtils.success(b);
     }
 
@@ -86,7 +86,7 @@ public class DepartmentController {
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateDepartment(@RequestBody DepartmentUpdateRequest departmentUpdateRequest,
-                                            HttpServletRequest request) {
+                                                  HttpServletRequest request) {
         if (departmentUpdateRequest == null || departmentUpdateRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -108,7 +108,7 @@ public class DepartmentController {
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<Department>> listDepartmentByPage(@RequestBody DepartmentQueryRequest departmentQueryRequest,
-                                                         HttpServletRequest request) {
+                                                               HttpServletRequest request) {
         long current = departmentQueryRequest.getCurrent();
         long size = departmentQueryRequest.getPageSize();
         Page<Department> userPage = departmentService.page(new Page<>(current, size),

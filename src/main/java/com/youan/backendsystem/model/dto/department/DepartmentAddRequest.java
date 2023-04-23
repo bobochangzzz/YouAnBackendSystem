@@ -19,12 +19,6 @@ import java.util.Date;
 public class DepartmentAddRequest implements Serializable {
 
     /**
-     * id
-     */
-    @TableId(type = IdType.AUTO)
-    private Long id;
-
-    /**
      * 上级部门id
      */
     private Long parentId;
@@ -35,9 +29,9 @@ public class DepartmentAddRequest implements Serializable {
     private String departmentName;
 
     /**
-     * 部门负责人
+     * 部门负责人id
      */
-    private String departmentHead;
+    private Long departmentHeadId;
 
     /**
      * 联系电话
@@ -52,7 +46,7 @@ public class DepartmentAddRequest implements Serializable {
     /**
      * 部门状态 0-开启 1-关闭
      */
-    private Long status;
+    private Integer status;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

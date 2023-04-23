@@ -51,7 +51,7 @@ public class MenuUpdateRequest implements Serializable {
     /**
      * 组件路径
      */
-    private String compoent;
+    private String component;
 
 
 

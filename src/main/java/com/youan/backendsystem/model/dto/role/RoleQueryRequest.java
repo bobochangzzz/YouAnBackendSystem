@@ -25,7 +25,7 @@ public class RoleQueryRequest extends PageRequest implements Serializable {
     /**
      * 状态
      */
-    private Long status;
+    private Integer status;
 
     /**
      * 备注

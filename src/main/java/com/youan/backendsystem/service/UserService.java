@@ -114,7 +114,7 @@ public interface UserService extends IService<User> {
      * @param user
      * @return
      */
-    boolean saveUser(User user);
+    boolean saveUserInfo(User user);
 
     /**
      * 更新用户

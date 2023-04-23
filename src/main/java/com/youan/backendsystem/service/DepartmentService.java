@@ -15,4 +15,7 @@ public interface DepartmentService extends IService<Department> {
 
     // 获取查询条件
     QueryWrapper<Department> getQueryWrapper(DepartmentQueryRequest departmentQueryRequest);
+
+    // 删除部门信息
+    boolean removeDepartment(Long id);
 }

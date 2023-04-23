@@ -12,4 +12,6 @@ public interface MenuService extends IService<Menu> {
     QueryWrapper<Menu> getQueryWrapper(MenuQueryRequest menuQueryRequest);
 
 
+    // 删除菜单
+    boolean removeMenu(Long id);
 }

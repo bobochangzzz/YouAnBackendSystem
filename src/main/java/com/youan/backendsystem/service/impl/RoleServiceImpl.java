@@ -32,7 +32,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
         String roleName = roleQueryRequest.getRoleName();
-        Long status = roleQueryRequest.getStatus();
+        Integer status = roleQueryRequest.getStatus();
         String remark = roleQueryRequest.getRemark();
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(StringUtils.isNotBlank(roleName), "roleName", roleName);

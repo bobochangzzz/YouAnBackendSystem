@@ -48,7 +48,7 @@ public class MenuController {
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<Menu>> listMenuByPage(@RequestBody MenuQueryRequest menuQueryRequest,
-                                                         HttpServletRequest request) {
+                                                   HttpServletRequest request) {
         long current = menuQueryRequest.getCurrent();
         long size = menuQueryRequest.getPageSize();
         Page<Menu> menuPage = menuService.page(new Page<>(current, size),
@@ -99,6 +99,7 @@ public class MenuController {
 
     /**
      * 删除菜单信息
+     *
      * @param deleteRequest
      * @param request
      * @return
@@ -109,7 +110,7 @@ public class MenuController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean b = menuService.removeById(deleteRequest.getId());
+        boolean b = menuService.removeMenu(deleteRequest.getId());
         return ResultUtils.success(b);
     }
 }

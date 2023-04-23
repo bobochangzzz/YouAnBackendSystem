@@ -33,7 +33,7 @@ public class MenuQueryRequest extends PageRequest implements Serializable {
     /**
      * 菜单类型
      */
-    private Integer type;
+    private Long type;
 
     /**
      * 菜单图标
@@ -53,7 +53,7 @@ public class MenuQueryRequest extends PageRequest implements Serializable {
     /**
      * 组件路径
      */
-    private String compoent;
+    private String component;
 
 }
 

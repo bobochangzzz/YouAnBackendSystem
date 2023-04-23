@@ -47,7 +47,7 @@ public class Menu implements Serializable {
     /**
      * 组件路径
      */
-    private String compoent;
+    private String component;
 
     /**
      * 图标

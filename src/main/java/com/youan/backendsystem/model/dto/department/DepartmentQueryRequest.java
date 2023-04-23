@@ -22,12 +22,12 @@ public class DepartmentQueryRequest extends PageRequest implements Serializable 
     private String departmentName;
 
     /**
-     * 部门负责人
+     * 部门负责人id
      */
-    private String departmentHead;
+    private Long departmentHeadId;
 
     /**
      * 部门状态 0-开启 1-关闭
      */
-    private Long status;
+    private Integer status;
 }
