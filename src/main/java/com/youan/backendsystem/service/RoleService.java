@@ -14,4 +14,7 @@ public interface RoleService extends IService<Role> {
 
     // 获取查询条件
     QueryWrapper<Role> getQueryWrapper(RoleQueryRequest roleQueryRequest);
+
+    // 角色分配
+    boolean assignRole(Long userId, String roleName);
 }

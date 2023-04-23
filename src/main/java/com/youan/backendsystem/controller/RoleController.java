@@ -12,7 +12,9 @@ import com.youan.backendsystem.exception.ThrowUtils;
 import com.youan.backendsystem.model.dto.role.RoleAddRequest;
 import com.youan.backendsystem.model.dto.role.RoleQueryRequest;
 import com.youan.backendsystem.model.dto.role.RoleUpdateRequest;
+import com.youan.backendsystem.model.dto.role.AssignRoleRequest;
 import com.youan.backendsystem.model.entity.Role;
+import com.youan.backendsystem.model.enums.UserRoleEnum;
 import com.youan.backendsystem.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -96,6 +98,7 @@ public class RoleController {
 
     /**
      * 删除角色信息
+     *
      * @param deleteRequest
      * @param request
      * @return
@@ -110,4 +113,16 @@ public class RoleController {
         return ResultUtils.success(b);
     }
 
+    @PostMapping("/assign")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> assignRole(@RequestBody AssignRoleRequest assignRoleRequest,
+                                            HttpServletRequest request) {
+        if (assignRoleRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long userId = assignRoleRequest.getUserId();
+        String userRoleEnumText = assignRoleRequest.getUserRoleEnumText();
+        boolean result = roleService.assignRole(userId, userRoleEnumText);
+        return ResultUtils.success(result);
+    }
 }

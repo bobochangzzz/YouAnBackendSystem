@@ -54,7 +54,7 @@ public class User implements Serializable {
     /**
      * 用户角色：user/admin/ban
      */
-    private String userRole;
+    private String userRoleName;
 
     /**
      * 创建时间

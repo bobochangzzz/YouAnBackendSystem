@@ -9,6 +9,7 @@ import com.youan.backendsystem.exception.BusinessException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -51,7 +52,7 @@ public class AuthInterceptor {
             if (mustUserRoleEnum == null) {
                 throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
             }
-            String userRole = loginUser.getUserRole();
+            String userRole = loginUser.getUserRoleName();
             // 如果被封号，直接拒绝
             if (UserRoleEnum.BAN.equals(mustUserRoleEnum)) {
                 throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
