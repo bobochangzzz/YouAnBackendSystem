@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+
 /**
  * 2023/4/21 - 10:47
  *
@@ -41,7 +42,7 @@ public class MenuController {
     /**
      * 分页获取菜单列表
      *
-     * @param MenuQueryRequest
+     * @param menuQueryRequest
      * @param request
      * @return
      */
@@ -113,4 +114,5 @@ public class MenuController {
         boolean b = menuService.removeMenu(deleteRequest.getId());
         return ResultUtils.success(b);
     }
+
 }

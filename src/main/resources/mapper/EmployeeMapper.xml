@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youan.backendsystem.mapper.EmployeeMapper">
+
+    <resultMap id="BaseResultMap" type="com.youan.backendsystem.model.entity.Employee">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="TINYINT"/>
+        <result property="nativePlace" column="nativePlace" jdbcType="VARCHAR"/>
+        <result property="position" column="position" jdbcType="VARCHAR"/>
+        <result property="career" column="career" jdbcType="VARCHAR"/>
+        <result property="school" column="school" jdbcType="VARCHAR"/>
+        <result property="major" column="major" jdbcType="VARCHAR"/>
+        <result property="certificate" column="certificate" jdbcType="VARCHAR"/>
+        <result property="entryTime" column="entryTime" jdbcType="TIMESTAMP"/>
+        <result property="resignTime" column="resignTime" jdbcType="TIMESTAMP"/>
+        <result property="cardTime" column="cardTime" jdbcType="TIMESTAMP"/>
+        <result property="departmentId" column="departmentId" jdbcType="BIGINT"/>
+        <result property="card" column="card" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="bankCard" column="bankCard" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,sex,nativePlace,position,career,school,major,certificate,entryTime,resignTime,
+        cardTime,departmentId,card,address,phone,bankCard,
+        status,remark,isDelete,
+        createTime,updateTime
+    </sql>
+</mapper>
