@@ -6,6 +6,7 @@ import com.youan.backendsystem.model.dto.user.UserQueryRequest;
 import com.youan.backendsystem.model.entity.User;
 import com.youan.backendsystem.model.vo.LoginUserVO;
 import com.youan.backendsystem.model.vo.UserVO;
+
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -111,6 +112,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 新建用户
+     *
      * @param user
      * @return
      */
@@ -118,6 +120,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 更新用户
+     *
      * @param user
      * @return
      */

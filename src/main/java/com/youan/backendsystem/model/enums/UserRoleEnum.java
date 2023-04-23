@@ -3,6 +3,7 @@ package com.youan.backendsystem.model.enums;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
@@ -15,7 +16,8 @@ public enum UserRoleEnum {
 
     USER("用户", "user"),
     ADMIN("管理员", "admin"),
-    BAN("被封号", "ban");
+    BAN("被封号", "ban"),
+    TEST("测试", "test");
 
     private final String text;
 
@@ -48,6 +50,16 @@ public enum UserRoleEnum {
         for (UserRoleEnum anEnum : UserRoleEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
+            }
+        }
+        return null;
+    }
+
+    // 根据text获取value值
+    public static String getValueByText(String text) {
+        for (UserRoleEnum anEnum : UserRoleEnum.values()) {
+            if (anEnum.text.equals(text)) {
+                return anEnum.value;
             }
         }
         return null;

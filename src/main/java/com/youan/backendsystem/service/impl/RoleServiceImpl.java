@@ -6,9 +6,13 @@ import com.youan.backendsystem.common.ErrorCode;
 import com.youan.backendsystem.exception.BusinessException;
 import com.youan.backendsystem.model.dto.role.RoleQueryRequest;
 import com.youan.backendsystem.model.entity.Role;
+import com.youan.backendsystem.model.entity.User;
+import com.youan.backendsystem.model.entity.UserRole;
+import com.youan.backendsystem.model.enums.UserRoleEnum;
 import com.youan.backendsystem.service.RoleService;
 import com.youan.backendsystem.mapper.RoleMapper;
 import com.youan.backendsystem.service.UserRoleService;
+import com.youan.backendsystem.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,8 @@ import javax.annotation.Resource;
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         implements RoleService {
 
+    @Resource
+    private UserService userService;
     @Resource
     private UserRoleService userRoleService;
 
@@ -39,5 +45,23 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         queryWrapper.eq(status != null, "status", status);
         queryWrapper.eq(StringUtils.isNotBlank(remark), "remark", remark);
         return queryWrapper;
+    }
+
+    @Override
+    public boolean assignRole(Long userId, String userRoleEnumText) {
+        // 将分配到的角色id存储到用户表中
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq(userId != 0L, "id", userId);
+        User user = userService.getOne(userQueryWrapper);
+        String enumValue = UserRoleEnum.getValueByText(userRoleEnumText);
+        user.setUserRoleName(enumValue);
+        // 先根据roleName查询角色id 再保存信息到用户角色表中
+        QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
+        roleQueryWrapper.eq(StringUtils.isNotBlank(userRoleEnumText), "roleName", userRoleEnumText);
+        Long roleId = getOne(roleQueryWrapper).getId();
+        UserRole userRole = new UserRole();
+        userRole.setUserId(userId);
+        userRole.setRoleId(roleId);
+        return userService.updateById(user) && userRoleService.save(userRole);
     }
 }

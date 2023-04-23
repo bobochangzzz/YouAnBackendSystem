@@ -6,17 +6,22 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
 import com.youan.backendsystem.common.ErrorCode;
 import com.youan.backendsystem.constant.CommonConstant;
 import com.youan.backendsystem.exception.BusinessException;
 import com.youan.backendsystem.mapper.UserMapper;
 import com.youan.backendsystem.model.dto.user.UserQueryRequest;
+import com.youan.backendsystem.model.entity.Role;
 import com.youan.backendsystem.model.entity.User;
 import com.youan.backendsystem.model.entity.UserDepartment;
+import com.youan.backendsystem.model.entity.UserRole;
 import com.youan.backendsystem.model.enums.UserRoleEnum;
 import com.youan.backendsystem.model.vo.LoginUserVO;
 import com.youan.backendsystem.model.vo.UserVO;
+import com.youan.backendsystem.service.RoleService;
 import com.youan.backendsystem.service.UserDepartmentService;
+import com.youan.backendsystem.service.UserRoleService;
 import com.youan.backendsystem.service.UserService;
 import com.youan.backendsystem.utils.SqlUtils;
 
@@ -177,7 +182,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean isAdmin(User user) {
-        return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
+        return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRoleName());
     }
 
     /**
@@ -275,4 +280,5 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         boolean result2 = updateById(user);
         return result1 && result2;
     }
+
 }

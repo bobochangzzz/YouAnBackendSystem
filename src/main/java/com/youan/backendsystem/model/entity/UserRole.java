@@ -16,7 +16,7 @@ public class UserRole implements Serializable {
     /**
      * 
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
