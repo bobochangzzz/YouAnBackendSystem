@@ -2,6 +2,7 @@ package com.youan.backendsystem.model.dto.role;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  * @description 分配角色请求类
  */
 @Data
-public class AssignRoleRequest {
+public class AssignRoleRequest implements Serializable {
     /**
      * 用户id
      */

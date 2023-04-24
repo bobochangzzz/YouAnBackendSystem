@@ -125,4 +125,12 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean updateUserInfo(User user);
+
+    /**
+     * 修改用户密码
+     *
+     * @param user
+     * @return
+     */
+    boolean updateUserPassword(User user);
 }

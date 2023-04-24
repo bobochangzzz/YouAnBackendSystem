@@ -6,7 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-@TableName(value ="role_menu")
+@TableName(value = "role_menu")
 @Data
 public class RoleMenu implements Serializable {
     /**
@@ -23,7 +23,7 @@ public class RoleMenu implements Serializable {
     /**
      *
      */
-    private Long menuId;
+    private String menuId;
 
     /**
      * 逻辑删除 1（true）已删除， 0（false）未删除

@@ -9,12 +9,13 @@ import com.youan.backendsystem.common.ResultUtils;
 import com.youan.backendsystem.constant.UserConstant;
 import com.youan.backendsystem.exception.BusinessException;
 import com.youan.backendsystem.exception.ThrowUtils;
-import com.youan.backendsystem.model.dto.role.RoleAddRequest;
-import com.youan.backendsystem.model.dto.role.RoleQueryRequest;
-import com.youan.backendsystem.model.dto.role.RoleUpdateRequest;
-import com.youan.backendsystem.model.dto.role.AssignRoleRequest;
+import com.youan.backendsystem.model.dto.role.*;
 import com.youan.backendsystem.model.entity.Role;
+import com.youan.backendsystem.model.entity.User;
 import com.youan.backendsystem.model.enums.UserRoleEnum;
+import com.youan.backendsystem.model.vo.CurrentRoleMenuVO;
+import com.youan.backendsystem.model.vo.CurrentRoleVO;
+import com.youan.backendsystem.model.vo.CurrentUserVO;
 import com.youan.backendsystem.service.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 2023/4/20 - 15:03
@@ -40,7 +42,7 @@ public class RoleController {
     /**
      * 分页获取角色列表
      *
-     * @param RoleQueryRequest
+     * @param roleQueryRequest
      * @param request
      * @return
      */
@@ -73,6 +75,27 @@ public class RoleController {
         boolean result = roleService.save(role);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(role.getId());
+    }
+
+    /**
+     * 根据 角色id 获取对应信息
+     *
+     * @param roleId
+     * @param request
+     * @return
+     */
+    @GetMapping("/get")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<CurrentRoleVO> getCurrentRole(long roleId, HttpServletRequest request) {
+        if (roleId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Role role = roleService.getById(roleId);
+        CurrentRoleVO currentRoleVO = new CurrentRoleVO();
+        BeanUtils.copyProperties(role, currentRoleVO);
+        currentRoleVO.setRoleIdentification(UserRoleEnum.getValueByText(role.getRoleName()));
+        ThrowUtils.throwIf(false, ErrorCode.NOT_FOUND_ERROR);
+        return ResultUtils.success(currentRoleVO);
     }
 
     /**
@@ -113,16 +136,52 @@ public class RoleController {
         return ResultUtils.success(b);
     }
 
-    @PostMapping("/assign")
+    /**
+     * 指定用户分配角色
+     *
+     * @param assignRoleRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/assign/role")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> assignRole(@RequestBody AssignRoleRequest assignRoleRequest,
                                             HttpServletRequest request) {
-        if (assignRoleRequest == null) {
+        if (assignRoleRequest == null || assignRoleRequest.getUserId() <= 0 || assignRoleRequest.getUserRoleEnumText() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Long userId = assignRoleRequest.getUserId();
         String userRoleEnumText = assignRoleRequest.getUserRoleEnumText();
         boolean result = roleService.assignRole(userId, userRoleEnumText);
         return ResultUtils.success(result);
+    }
+
+    /**
+     * 指定角色分配菜单权限
+     *
+     * @param assignMenuRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/assign/menu")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> assignMenu(@RequestBody AssignMenuRequest assignMenuRequest,
+                                            HttpServletRequest request) {
+        if (assignMenuRequest == null || assignMenuRequest.getRoleId() <= 0 || assignMenuRequest.getMenuIds() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long roleId = assignMenuRequest.getRoleId();
+        List<Long> menuIds = assignMenuRequest.getMenuIds();
+        boolean result = roleService.assignMenu(roleId, menuIds);
+        return ResultUtils.success(result);
+    }
+
+    @GetMapping("/get/menuPermission")
+    public BaseResponse<CurrentRoleMenuVO> getCurrentRoleMenu(long roleId, HttpServletRequest request) {
+        if (roleId < 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        CurrentRoleMenuVO currentRoleMenuVO = roleService.getMenuPermission(roleId);
+        return ResultUtils.success(currentRoleMenuVO);
     }
 }

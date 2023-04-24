@@ -7,8 +7,10 @@ import com.youan.backendsystem.common.ErrorCode;
 import com.youan.backendsystem.common.ResultUtils;
 import com.youan.backendsystem.model.dto.user.*;
 import com.youan.backendsystem.model.entity.User;
+import com.youan.backendsystem.model.vo.CurrentUserVO;
 import com.youan.backendsystem.model.vo.LoginUserVO;
 import com.youan.backendsystem.model.vo.UserVO;
+import com.youan.backendsystem.service.DepartmentService;
 import com.youan.backendsystem.service.UserService;
 import com.youan.backendsystem.annotation.AuthCheck;
 import com.youan.backendsystem.constant.UserConstant;
@@ -41,6 +43,9 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private DepartmentService departmentService;
 
     // region 登录相关
 
@@ -165,7 +170,7 @@ public class UserController {
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
                                             HttpServletRequest request) {
-        if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
+        if (userUpdateRequest == null || userUpdateRequest.getId() == 0L) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = new User();
@@ -184,13 +189,17 @@ public class UserController {
      */
     @GetMapping("/get")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<User> getUserById(long id, HttpServletRequest request) {
+    public BaseResponse<CurrentUserVO> getUserById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User user = userService.getById(id);
-        ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
-        return ResultUtils.success(user);
+        Long departmentId = user.getDepartmentId();
+        CurrentUserVO currentUser = new CurrentUserVO();
+        BeanUtils.copyProperties(user, currentUser);
+        currentUser.setDepartmentName(departmentService.getById(departmentId).getDepartmentName());
+        ThrowUtils.throwIf(false, ErrorCode.NOT_FOUND_ERROR);
+        return ResultUtils.success(currentUser);
     }
 
     /**
@@ -200,12 +209,12 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/get/vo")
+    /*@GetMapping("/get/vo")
     public BaseResponse<UserVO> getUserVOById(long id, HttpServletRequest request) {
         BaseResponse<User> response = getUserById(id, request);
         User user = response.getData();
         return ResultUtils.success(userService.getUserVO(user));
-    }
+    }*/
 
     /**
      * 分页获取用户列表（仅管理员）
@@ -260,6 +269,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/update/my")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateMyUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
                                               HttpServletRequest request) {
         if (userUpdateMyRequest == null) {
@@ -270,6 +280,28 @@ public class UserController {
         BeanUtils.copyProperties(userUpdateMyRequest, user);
         user.setId(loginUser.getId());
         boolean result = userService.updateById(user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param userUpdatePasswordRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/update/password")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> updatePassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest,
+                                                HttpServletRequest request) {
+        if (userUpdatePasswordRequest == null || userUpdatePasswordRequest.getUserId() <= 0L) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User user = new User();
+        user.setId(userUpdatePasswordRequest.getUserId());
+        user.setUserPassword(userUpdatePasswordRequest.getUserPassword());
+        boolean result = userService.updateUserPassword(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }

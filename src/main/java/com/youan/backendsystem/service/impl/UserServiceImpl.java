@@ -245,27 +245,62 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean saveUserInfo(User user) {
-        boolean result1 = save(user);
-        // 保存用户到用户部门关系表中
-        Long userId = user.getId();
-        Long departmentId = user.getDepartmentId();
-        UserDepartment userDepartment = new UserDepartment();
-        userDepartment.setUserId(userId);
-        userDepartment.setDepartmentId(departmentId);
-        boolean result2 = userDepartmentService.save(userDepartment);
-        return result1 && result2;
+        String userAccount = user.getUserAccount();
+        String userPassword = user.getUserPassword();
+        // 1. 校验
+        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+        }
+        if (userAccount.length() < 4) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
+        }
+        if (userPassword.length() < 8) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
+        }
+        synchronized (userAccount.intern()) {
+            if (checkAccount(userAccount)) {
+                // 2. 加密
+                String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+                // 3. 插入数据
+                user.setUserPassword(encryptPassword);
+                boolean result1 = save(user);
+                if (!result1) {
+                    throw new BusinessException(ErrorCode.SYSTEM_ERROR, "添加失败，数据库错误");
+                }
+                // 保存用户到用户部门关系表中
+                Long userId = user.getId();
+                Long departmentId = user.getDepartmentId();
+                UserDepartment userDepartment = new UserDepartment();
+                userDepartment.setUserId(userId);
+                userDepartment.setDepartmentId(departmentId);
+                boolean result2 = userDepartmentService.save(userDepartment);
+                return result2;
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 校验账号是否重复
+     *
+     * @param userAccount
+     */
+    private boolean checkAccount(String userAccount) {
+        // 账户不能重复
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userAccount", userAccount);
+        long count = this.baseMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
+        }
+        return true;
     }
 
     @Override
     public boolean updateUserInfo(User user) {
-        // 判断更新用户是否有修改密码
-        String userPassword = user.getUserPassword();
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.eq("id", user.getId());
         User oldUser = getOne(userQueryWrapper);
-        if (userPassword == null) {
-            user.setUserPassword(oldUser.getUserPassword());
-        }
         // 更新用户部门关系表
         // 判断当前用户所属部门是否发生改变
         boolean result1 = true;
@@ -279,6 +314,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         boolean result2 = updateById(user);
         return result1 && result2;
+    }
+
+    @Override
+    public boolean updateUserPassword(User user) {
+        // 拿到需要新加密的密码 进行加密存放数据库
+        user.setUserPassword(DigestUtils.md5DigestAsHex((SALT + user.getUserPassword()).getBytes()));
+        return updateById(user);
     }
 
 }
