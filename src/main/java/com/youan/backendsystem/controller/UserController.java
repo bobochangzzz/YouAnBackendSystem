@@ -20,15 +20,14 @@ import com.youan.backendsystem.exception.ThrowUtils;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户接口
@@ -304,5 +303,23 @@ public class UserController {
         boolean result = userService.updateUserPassword(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
+    }
+
+    /**
+     * 导出用户数据
+     *
+     * @param response
+     * @return
+     */
+    @GetMapping("/export")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> exportUserData(HttpServletResponse response) {
+        return ResultUtils.success(userService.exportUserData(response));
+    }
+
+    @PostMapping("/import")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> importUserData(MultipartFile file) {
+        return ResultUtils.success(userService.importUserData(file));
     }
 }

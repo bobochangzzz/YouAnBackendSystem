@@ -6,9 +6,12 @@ import com.youan.backendsystem.model.dto.user.UserQueryRequest;
 import com.youan.backendsystem.model.entity.User;
 import com.youan.backendsystem.model.vo.LoginUserVO;
 import com.youan.backendsystem.model.vo.UserVO;
+import org.apache.http.HttpResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 用户服务
@@ -133,4 +136,20 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean updateUserPassword(User user);
+
+    /**
+     * 导出用户数据
+     *
+     * @param response
+     * @return
+     */
+    boolean exportUserData(HttpServletResponse response);
+
+    /**
+     * 导入用户数据
+     *
+     * @param file
+     * @return
+     */
+    boolean importUserData(MultipartFile file);
 }

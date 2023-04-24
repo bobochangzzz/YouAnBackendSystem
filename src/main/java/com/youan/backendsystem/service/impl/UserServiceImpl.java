@@ -1,42 +1,39 @@
 package com.youan.backendsystem.service.impl;
 
-import static com.youan.backendsystem.constant.UserConstant.USER_LOGIN_STATE;
-
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.gson.Gson;
 import com.youan.backendsystem.common.ErrorCode;
-import com.youan.backendsystem.constant.CommonConstant;
 import com.youan.backendsystem.exception.BusinessException;
+import com.youan.backendsystem.listener.UserListener;
 import com.youan.backendsystem.mapper.UserMapper;
 import com.youan.backendsystem.model.dto.user.UserQueryRequest;
-import com.youan.backendsystem.model.entity.Role;
 import com.youan.backendsystem.model.entity.User;
 import com.youan.backendsystem.model.entity.UserDepartment;
-import com.youan.backendsystem.model.entity.UserRole;
 import com.youan.backendsystem.model.enums.UserRoleEnum;
 import com.youan.backendsystem.model.vo.LoginUserVO;
+import com.youan.backendsystem.model.vo.UserExcelVO;
 import com.youan.backendsystem.model.vo.UserVO;
-import com.youan.backendsystem.service.RoleService;
+import com.youan.backendsystem.service.DepartmentService;
 import com.youan.backendsystem.service.UserDepartmentService;
-import com.youan.backendsystem.service.UserRoleService;
 import com.youan.backendsystem.service.UserService;
-import com.youan.backendsystem.utils.SqlUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.youan.backendsystem.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现
@@ -50,6 +47,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private UserDepartmentService userDepartmentService;
+    @Resource
+    private DepartmentService departmentService;
 
 
     /**
@@ -322,5 +321,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUserPassword(DigestUtils.md5DigestAsHex((SALT + user.getUserPassword()).getBytes()));
         return updateById(user);
     }
+
+    @Override
+    public boolean exportUserData(HttpServletResponse response) {
+        // 设置下载信息
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        String fileName = "用户数据表";
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".xlsx");
+        // 查询数据库
+        List<UserExcelVO> userExcelVOList = list().stream()
+                // todo 性能优化：减少数据库查询次数 批量先查询出所有部门id 再获取部门名称 将信息以key-value存入Set中
+                .map(user -> {
+                    // 将user数据复制到userExcelVO中
+                    UserExcelVO userExcelVO = new UserExcelVO();
+                    BeanUtils.copyProperties(user, userExcelVO);
+                    // 根据部门id获取部门名称
+                    userExcelVO.setDepartmentName(departmentService.getById(user.getDepartmentId()).getDepartmentName());
+                    return userExcelVO;
+                })
+                .collect(Collectors.toList());
+        // 调用EasyExcel方法进行写操作
+        try {
+            EasyExcel.write(response.getOutputStream(), UserExcelVO.class).sheet("用户数据").doWrite(userExcelVOList);
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean importUserData(MultipartFile file) {
+        try {
+            EasyExcel.read(file.getInputStream(), UserExcelVO.class, new UserListener(baseMapper, departmentService)).sheet().doRead();
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        return false;
+    }
+
 
 }
