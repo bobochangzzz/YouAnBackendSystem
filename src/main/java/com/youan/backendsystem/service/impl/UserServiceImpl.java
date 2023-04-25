@@ -333,7 +333,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 设置下载信息
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
-        String fileName = "用户数据表";
+        String fileName = "user";
         response.setHeader("Content-Disposition", "attachment;filename=" + fileName + ".xlsx");
         // 查询数据库
         List<UserExcelVO> userExcelVOList = list().stream()

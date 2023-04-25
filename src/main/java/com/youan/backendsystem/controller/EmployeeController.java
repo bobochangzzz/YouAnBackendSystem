@@ -13,16 +13,16 @@ import com.youan.backendsystem.model.dto.employee.EmployeeAddRequest;
 import com.youan.backendsystem.model.dto.employee.EmployeeQueryRequest;
 import com.youan.backendsystem.model.dto.employee.EmployeeUpdateRequest;
 import com.youan.backendsystem.model.entity.Employee;
+import com.youan.backendsystem.model.vo.CurrentEmployeeVo;
 import com.youan.backendsystem.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Author: zz
@@ -55,6 +55,21 @@ public class EmployeeController {
                 employeeService.getQueryWrapper(employeeQueryRequest));
         return ResultUtils.success(employeePage);
     }
+
+
+    @GetMapping("/get")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<CurrentEmployeeVo> getCurrentEmployee(long employeeId, HttpServletRequest request) {
+        if (employeeId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Employee employee = employeeService.getById(employeeId);
+        CurrentEmployeeVo currentEmployeeVo = new CurrentEmployeeVo();
+        BeanUtils.copyProperties(employee, currentEmployeeVo);
+        ThrowUtils.throwIf(false, ErrorCode.NOT_FOUND_ERROR);
+        return ResultUtils.success(currentEmployeeVo);
+    }
+
 
     /**
      * 添加员工
@@ -112,4 +127,33 @@ public class EmployeeController {
         boolean b = employeeService.removeById(deleteRequest.getId());
         return ResultUtils.success(b);
     }
+
+    /**
+     * @description:导入员工数据
+     * @author: zz
+     * @date: 2023-04-25 9:53
+     * @param: [file]
+     * @return: com.youan.backendsystem.common.BaseResponse<java.lang.Boolean>
+     **/
+    @PostMapping("/import")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> importEmployeeData(MultipartFile file) {
+        return ResultUtils.success(employeeService.importEmployeeData(file));
+    }
+
+
+    /**
+     * @description:导出员工数据
+     * @author: zz
+     * @date: 2023-04-25 14:18
+     * @param: [response]
+     * @return: com.youan.backendsystem.common.BaseResponse<java.lang.Boolean>
+     **/
+    @GetMapping("/export")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> exportEmployeeData(HttpServletResponse response) {
+        return ResultUtils.success(employeeService.exportEmployeeData(response));
+    }
+
+
 }

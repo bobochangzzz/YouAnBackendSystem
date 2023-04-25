@@ -1,6 +1,5 @@
-package com.youan.backendsystem.model.entity;
+package com.youan.backendsystem.model.vo;
 
-import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,21 +7,12 @@ import java.util.Date;
 
 /**
  * @Author: zz
- * @CreateTime: 2023-04-23  15:01
- * @Description: 员工实体类
- * @TableName employee
+ * @CreateTime: 2023-04-25  15:49
+ * @Description: TODO
  * @Version: 1.0
  */
-
-@TableName(value = "employee")
 @Data
-public class Employee implements Serializable {
-    /**
-     * 员工编号
-     */
-    @TableId(type = IdType.AUTO)
-    private Long id;
-
+public class CurrentEmployeeVo implements Serializable {
     /**
      * 员工名称
      */
@@ -121,22 +111,4 @@ public class Employee implements Serializable {
      */
     private String remark;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 是否删除
-     */
-    @TableLogic
-    private Integer isDelete;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }
