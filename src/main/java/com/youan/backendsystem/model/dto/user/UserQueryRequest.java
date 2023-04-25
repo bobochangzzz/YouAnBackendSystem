@@ -28,9 +28,9 @@ public class UserQueryRequest extends PageRequest implements Serializable {
     private String userName;
 
     /**
-     * 用户角色：user/admin/ban
+     * 联系电话
      */
-    private String userRole;
+    private String phone;
 
     private static final long serialVersionUID = 1L;
 }

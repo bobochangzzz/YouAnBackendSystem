@@ -9,6 +9,7 @@ import com.youan.backendsystem.exception.BusinessException;
 import com.youan.backendsystem.listener.UserListener;
 import com.youan.backendsystem.mapper.UserMapper;
 import com.youan.backendsystem.model.dto.user.UserQueryRequest;
+import com.youan.backendsystem.model.entity.Department;
 import com.youan.backendsystem.model.entity.User;
 import com.youan.backendsystem.model.entity.UserDepartment;
 import com.youan.backendsystem.model.enums.UserRoleEnum;
@@ -216,6 +217,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
+        QueryWrapper<Department> departmentQueryWrapper = new QueryWrapper<Department>();
+        userVO.setDepartmentName(
+                departmentService.getOne(
+                                departmentQueryWrapper.eq(user.getDepartmentId() != 0L, "id", user.getDepartmentId()))
+                        .getDepartmentName());
         return userVO;
     }
 
@@ -234,10 +240,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         Long id = userQueryRequest.getId();
         String userName = userQueryRequest.getUserName();
-        String userRole = userQueryRequest.getUserRole();
+        String phone = userQueryRequest.getPhone();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(id != 0L, "id", id);
-        queryWrapper.eq(StringUtils.isNotBlank(userRole), "userRole", userRole);
+        queryWrapper.eq(id != null, "id", id);
+        queryWrapper.eq(StringUtils.isNotBlank(phone), "phone", phone);
         queryWrapper.like(StringUtils.isNotBlank(userName), "userName", userName);
         return queryWrapper;
     }

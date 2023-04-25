@@ -2,6 +2,9 @@ package com.youan.backendsystem.model.vo;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -16,7 +19,13 @@ public class UserVO implements Serializable {
     /**
      * id
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
+
+    /**
+     * 用户名称
+     */
+    private String userAccount;
 
     /**
      * 用户昵称
@@ -24,19 +33,24 @@ public class UserVO implements Serializable {
     private String userName;
 
     /**
-     * 用户头像
+     * 部门名称
      */
-    private String userAvatar;
+    private String departmentName;
 
     /**
-     * 用户简介
+     * 权限名称
      */
-    private String userProfile;
+    private String userRoleName;
 
     /**
-     * 用户角色：user/admin/ban
+     * 联系电话
      */
-    private String userRole;
+    private String phone;
+
+    /**
+     * 状态
+     */
+    private Integer status;
 
     /**
      * 创建时间
