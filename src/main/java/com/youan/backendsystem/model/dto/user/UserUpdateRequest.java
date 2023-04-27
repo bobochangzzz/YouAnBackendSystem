@@ -33,6 +33,15 @@ public class UserUpdateRequest implements Serializable {
     private String phone;
 
     /**
+     * 用户状态
+     */
+    private Integer status;
+
+    /**
+     * 用户权限
+     */
+    private String userRoleName;
+    /**
      * 用户密码
      */
     private String userPassword;

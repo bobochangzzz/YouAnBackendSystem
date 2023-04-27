@@ -1,6 +1,7 @@
 package com.youan.backendsystem.model.dto.user;
 
 import java.io.Serializable;
+
 import lombok.Data;
 
 /**
@@ -36,6 +37,11 @@ public class UserAddRequest implements Serializable {
      * 部门Id
      */
     private Long departmentId;
+
+    /**
+     * 用户分配角色名
+     */
+    private String userRoleName;
 
 
     private static final long serialVersionUID = 1L;

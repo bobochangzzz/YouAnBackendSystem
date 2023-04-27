@@ -9,16 +9,12 @@ import com.youan.backendsystem.exception.BusinessException;
 import com.youan.backendsystem.listener.UserListener;
 import com.youan.backendsystem.mapper.UserMapper;
 import com.youan.backendsystem.model.dto.user.UserQueryRequest;
-import com.youan.backendsystem.model.entity.Department;
-import com.youan.backendsystem.model.entity.User;
-import com.youan.backendsystem.model.entity.UserDepartment;
+import com.youan.backendsystem.model.entity.*;
 import com.youan.backendsystem.model.enums.UserRoleEnum;
 import com.youan.backendsystem.model.vo.LoginUserVO;
 import com.youan.backendsystem.model.vo.UserExcelVO;
 import com.youan.backendsystem.model.vo.UserVO;
-import com.youan.backendsystem.service.DepartmentService;
-import com.youan.backendsystem.service.UserDepartmentService;
-import com.youan.backendsystem.service.UserService;
+import com.youan.backendsystem.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -50,7 +46,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserDepartmentService userDepartmentService;
     @Resource
     private DepartmentService departmentService;
-
 
     /**
      * 盐值，混淆密码
@@ -239,12 +234,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
         Long id = userQueryRequest.getId();
+        String userAccount = userQueryRequest.getUserAccount();
         String userName = userQueryRequest.getUserName();
+        Integer departmentId = userQueryRequest.getDepartmentId();
         String phone = userQueryRequest.getPhone();
+        Integer status = userQueryRequest.getStatus();
+        String userRoleName = userQueryRequest.getUserRoleName();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(id != null, "id", id);
+        queryWrapper.eq(StringUtils.isNotBlank(userAccount), "userAccount", userAccount);
+        queryWrapper.eq(departmentId != null, "departmentId", departmentId);
+        queryWrapper.eq(StringUtils.isNotBlank(userRoleName), "userRoleName", userRoleName);
+        queryWrapper.eq(status != null, "status", status);
         queryWrapper.eq(StringUtils.isNotBlank(phone), "phone", phone);
-        queryWrapper.like(StringUtils.isNotBlank(userName), "userName", userName);
+        queryWrapper.eq(StringUtils.isNotBlank(userName), "userName", userName);
         return queryWrapper;
     }
 
@@ -279,7 +282,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 userDepartment.setUserId(userId);
                 userDepartment.setDepartmentId(departmentId);
                 boolean result2 = userDepartmentService.save(userDepartment);
-                return result2;
+                return result1 && result2;
             }
             return false;
         }
