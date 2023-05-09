@@ -19,9 +19,30 @@
         <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="BaseResultMap2" type="com.youan.backendsystem.model.vo.MenuVo">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="pid" column="pid" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="permissionValue" column="permissionValue" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="component" column="component" jdbcType="VARCHAR"/>
+        <result property="icon" column="icon" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
         id,pid,
         name,type,permissionValue,path,component,icon,status,isDelete,
         createTime,updateTime
     </sql>
+
+    <select id="selectAll" resultMap="BaseResultMap2">
+        select id,pid,
+        name,type,permissionValue,path,component,icon,status,isDelete,
+        createTime,updateTime from menu;
+    </select>
 </mapper>

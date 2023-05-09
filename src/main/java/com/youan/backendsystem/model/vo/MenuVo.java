@@ -1,7 +1,10 @@
-package com.youan.backendsystem.model.entity;
+package com.youan.backendsystem.model.vo;
 
-
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.youan.backendsystem.model.entity.Menu;
 import lombok.Data;
 import org.springframework.data.annotation.Transient;
 
@@ -10,15 +13,16 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @TableName menu菜单
+ * @Author: zz
+ * @CreateTime: 2023-05-04  14:52
+ * @Description: TODO
+ * @Version: 1.0
  */
-@TableName(value = "menu")
 @Data
-public class Menu implements Serializable {
+public class MenuVo implements Serializable {
     /**
      *id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -80,4 +84,6 @@ public class Menu implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
+    @Transient
+    List<MenuVo> subMenuList;
 }

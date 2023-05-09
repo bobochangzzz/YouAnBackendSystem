@@ -13,16 +13,15 @@ import com.youan.backendsystem.model.dto.menu.MenuAddRequest;
 import com.youan.backendsystem.model.dto.menu.MenuQueryRequest;
 import com.youan.backendsystem.model.dto.menu.MenuUpdateRequest;
 import com.youan.backendsystem.model.entity.Menu;
+import com.youan.backendsystem.model.vo.MenuVo;
 import com.youan.backendsystem.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -56,6 +55,21 @@ public class MenuController {
                 menuService.getQueryWrapper(menuQueryRequest));
         return ResultUtils.success(menuPage);
     }
+
+    /**
+     * @description:封装子类菜单
+     * @author: zz
+     * @date: 2023-05-04 10:38
+     * @param: []
+     * @return: com.youan.backendsystem.common.BaseResponse<List<Menu>>
+     **/
+    @GetMapping("/list")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<List<MenuVo>> listMenu() {
+        List<MenuVo> parentMenuList=menuService.listMenu();
+        return ResultUtils.success(parentMenuList);
+    }
+
 
     /**
      * 添加菜单
