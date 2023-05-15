@@ -2,28 +2,36 @@ package com.youan.backendsystem.controller;
 
 import com.youan.backendsystem.common.BaseResponse;
 import com.youan.backendsystem.common.ResultUtils;
+import com.youan.backendsystem.common.TableDataInfo;
+import com.youan.backendsystem.model.entity.Process;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.persistence.entity.VariableInstance;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.repository.ProcessDefinitionQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 
+import org.activiti.image.ProcessDiagramGenerator;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,58 +41,125 @@ import java.util.zip.ZipInputStream;
 /**
  * @Author: zz
  * @CreateTime: 2023-05-09  14:21
- * @Description: 流程管理模块
+ * @Description: 部署管理接口
  * @Version: 1.0
  */
 @RestController
-@RequestMapping("/activiti")
+@RequestMapping("/flow")
 @Slf4j
-public class ActivitiController {
+public class FlowController {
 
-    @Autowired
+    @Resource
     private RepositoryService repositoryService;
 
-    @Autowired
+    @Resource
     private RuntimeService runtimeService;
 
-    @Autowired
-    private TaskService taskService;
-
-    @Autowired
-    private HistoryService historyService;
+    @Resource
+    ProcessEngineConfiguration configuration;
 
 
-    //添加流程定义通过上传bpmn
-//    @PostMapping("/uploadStreamAndDeployment")
-//    public BaseResponse uploadStreamAndDeployment(@RequestParam("processFile") MultipartFile multipartFile,
-//                                                  @RequestParam("processName") String processName) {
-//        // 获取上传的文件名
-//        String fileName = multipartFile.getOriginalFilename();
-//        try {
-//            // 得到输入流（字节流）对象
-//            InputStream fileInputStream = multipartFile.getInputStream();
-//            // 文件的扩展名
-//            String extension = FilenameUtils.getExtension(fileName);
-//            // ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();//创建处理引擎实例
-//            // repositoryService = processEngine.getRepositoryService();//创建仓库服务实例
-//            Deployment deployment = null;
-//            if (extension.equals("zip")) {
-//                ZipInputStream zip = new ZipInputStream(fileInputStream);
-//                deployment = repositoryService.createDeployment()//初始化流程
-//                        .addZipInputStream(zip)
-//                        .name(processName)
-//                        .deploy();
-//            } else {
-//                deployment = repositoryService.createDeployment()//初始化流程
-//                        .addInputStream(fileName, fileInputStream)
-//                        .name(processName)
-//                        .deploy();
-//            }
-//            return ResultUtils.success("部署流程成功:" + deployment.getId());
-//        } catch (Exception e) {
-//            return ResultUtils.error(1, "上传文件失败");
-//        }
-//    }
+
+    //上传一个工作流文件，流程部署
+    @PostMapping(value = "/uploadworkflow")
+    public BaseResponse fileupload(@RequestParam("processFile") MultipartFile uploadfile,
+                                   @RequestParam("processName") String processName ) {
+        try {
+            String filename = uploadfile.getOriginalFilename();
+            InputStream is = uploadfile.getInputStream();
+            if (filename.endsWith("zip")) {
+                repositoryService.createDeployment().name(filename)
+                        .addZipInputStream(new ZipInputStream(is))
+                        .name(processName)
+                        .deploy();
+            } else if (filename.endsWith("bpmn") || filename.endsWith("xml")) {
+                repositoryService.createDeployment().name(filename)
+                        .addInputStream(filename, is)
+                        .name(processName)
+                        .deploy();
+            } else {
+                return ResultUtils.error(1,"文件格式错误");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtils.error(1,"部署失败");
+        }
+        return ResultUtils.success("部署成功");
+    }
+
+
+    //查询已部署工作流列表
+    @PostMapping(value = "/getprocesslists")
+    public TableDataInfo getlist(@RequestParam(required = false) String key, @RequestParam(required = false) String name,
+                                 Integer pageSize, Integer pageNum) {
+        ProcessDefinitionQuery queryCondition = repositoryService.createProcessDefinitionQuery();
+        if (StringUtils.isNotEmpty(key)) {
+            queryCondition.processDefinitionKey(key);
+        }
+        if (StringUtils.isNotEmpty(name)) {
+            queryCondition.processDefinitionName(name);
+        }
+
+        int total = queryCondition.list().size();
+        int start = (pageNum - 1) * pageSize;
+        List<ProcessDefinition> pageList = queryCondition.orderByDeploymentId().desc().listPage(start, pageSize);
+        List<Process> mylist = new ArrayList<Process>();
+        for (int i = 0; i < pageList.size(); i++) {
+            Process p =new Process();
+            p.setDeploymentId(pageList.get(i).getDeploymentId());
+            p.setId(pageList.get(i).getId());
+            p.setKey(pageList.get(i).getKey());
+            p.setName(pageList.get(i).getName());
+            p.setResourceName(pageList.get(i).getResourceName());
+            p.setDiagramresourceName(pageList.get(i).getDiagramResourceName());
+            p.setVersion(pageList.get(i).getVersion());
+            p.setSuspended(pageList.get(i).isSuspended());
+            mylist.add(p);
+        }
+        TableDataInfo rspData = new TableDataInfo();
+        rspData.setCode(0);
+        rspData.setRows(mylist);
+        rspData.setTotal(total);
+        return rspData;
+    }
+
+    //根据部署id删除已部署的工作流
+    @PostMapping(value = "/removeDeploymentId")
+    public BaseResponse removeDeploymentId(@RequestParam("deploymentId") String deploymentId) {
+        repositoryService.deleteDeployment(deploymentId, true);
+        return ResultUtils.success("删除成功");
+    }
+
+    //查看工作流图片
+    @GetMapping(value = "/showresource")
+    public void showresource(@RequestParam("pdid") String pdid,
+                             HttpServletResponse response) throws Exception {
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(pdid);
+        ProcessDiagramGenerator diagramGenerator = configuration.getProcessDiagramGenerator();
+        InputStream is = diagramGenerator.generateDiagram(bpmnModel, "png",  "宋体", "宋体", "宋体", configuration.getClassLoader(), 1.0);
+        ServletOutputStream output = response.getOutputStream();
+        IOUtils.copy(is, output);
+    }
+
+
+    //挂起一个流程定义
+    @GetMapping(value = "/suspendProcessDefinition")
+    public BaseResponse suspendProcessDefinition(@RequestParam("pdid") String pdid) throws Exception {
+
+            repositoryService.suspendProcessDefinitionById(pdid);
+
+        return ResultUtils.success("挂起流程定义："+pdid+"成功");
+    }
+
+    //激活一个流程定义
+    @GetMapping(value = "/activateProcessDefinition")
+    public BaseResponse activateProcessDefinition(@RequestParam("pdid") String pdid) throws Exception {
+
+            repositoryService.activateProcessDefinitionById(pdid);
+
+        return ResultUtils.success("激活流程定义："+pdid+"成功");
+    }
+
 //
 //    //添加流程定义通过在线提交BPMN的XML
 //    @PostMapping("/addDeploymentByString")
