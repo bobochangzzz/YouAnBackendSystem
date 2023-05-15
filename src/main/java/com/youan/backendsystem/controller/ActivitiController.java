@@ -70,9 +70,9 @@ public class ActivitiController {
                         .name(processName)
                         .deploy();
             }
-            return ResultUtils.success("部署流程成功:"+deployment.getId());
+            return ResultUtils.success("部署流程成功:" + deployment.getId());
         } catch (Exception e) {
-            return ResultUtils.error(1,"上传文件失败");
+            return ResultUtils.error(1, "上传文件失败");
         }
     }
 
@@ -82,12 +82,12 @@ public class ActivitiController {
                                               @RequestParam("processName") String processName) {
         try {
             Deployment deployment = repositoryService.createDeployment()
-                    .addString("CreateWithBPMNJS.bpmn",stringBPMN)//第一个参数：资源名称，第二个参数：XML文件
+                    .addString("CreateWithBPMNJS.bpmn", stringBPMN)//第一个参数：资源名称，第二个参数：XML文件
                     .name(processName)
                     .deploy();
-            return ResultUtils.success("部署流程成功:"+deployment.getId());
+            return ResultUtils.success("部署流程成功:" + deployment.getId());
         } catch (Exception e) {
-            return ResultUtils.error(1,"部署失败");
+            return ResultUtils.error(1, "部署失败");
         }
     }
 
@@ -98,7 +98,7 @@ public class ActivitiController {
                                     @RequestParam("deploymentId") String deploymentId,
                                     @RequestParam("resourceName") String resourceName) {
         try {
-            InputStream inputStream = repositoryService.getResourceAsStream(deploymentId,resourceName);
+            InputStream inputStream = repositoryService.getResourceAsStream(deploymentId, resourceName);
             int count = inputStream.available();
             byte[] bytes = new byte[count];
             response.setContentType("text/xml");
@@ -117,7 +117,7 @@ public class ActivitiController {
     public BaseResponse getDefinitions() {
 
         try {
-            List<HashMap<String, Object>> listMap= new ArrayList<HashMap<String, Object>>();
+            List<HashMap<String, Object>> listMap = new ArrayList<HashMap<String, Object>>();
             List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().list();
 
 //            list.sort((y,x)->x.getVersion()-y.getVersion());
@@ -135,8 +135,8 @@ public class ActivitiController {
 
             return ResultUtils.success(listMap);
 
-        }catch (Exception e) {
-            return ResultUtils.error(1,"获取流程定义失败");
+        } catch (Exception e) {
+            return ResultUtils.error(1, "获取流程定义失败");
         }
     }
 
@@ -146,7 +146,7 @@ public class ActivitiController {
     public BaseResponse getDeployments() {
         try {
 
-            List<HashMap<String, Object>> listMap= new ArrayList<HashMap<String, Object>>();
+            List<HashMap<String, Object>> listMap = new ArrayList<HashMap<String, Object>>();
             List<Deployment> list = repositoryService.createDeploymentQuery().list();
             for (Deployment dep : list) {
                 HashMap<String, Object> hashMap = new HashMap<>();
@@ -157,7 +157,7 @@ public class ActivitiController {
             }
             return ResultUtils.success(listMap);
         } catch (Exception e) {
-            return ResultUtils.error(1,"获取流程部署失败");
+            return ResultUtils.error(1, "获取流程部署失败");
         }
     }
 
@@ -174,7 +174,7 @@ public class ActivitiController {
             return ResultUtils.success("删除成功");
 
         } catch (Exception e) {
-            return ResultUtils.error(1,"删除失败");
+            return ResultUtils.error(1, "删除失败");
         }
     }
 
@@ -191,12 +191,12 @@ public class ActivitiController {
 //            list.sort((y,x)->x.getStartDate().toString().compareTo(y.getStartDate().toString()));
 
             List<HashMap<String, Object>> listMap = new ArrayList<HashMap<String, Object>>();
-            for(ProcessInstance pi:list){
+            for (ProcessInstance pi : list) {
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put("id", pi.getId());
 //                hashMap.put("processInstanceId", pi.getProcessInstanceId());
                 hashMap.put("name", pi.getName());
-                hashMap.put("deploymentId",pi.getDeploymentId());
+                hashMap.put("deploymentId", pi.getDeploymentId());
                 hashMap.put("processDefinitionId", pi.getProcessDefinitionId());
                 hashMap.put("processDefinitionKey", pi.getProcessDefinitionKey());
                 hashMap.put("startDate", pi.getStartTime());
@@ -211,7 +211,7 @@ public class ActivitiController {
 
             return ResultUtils.success(listMap);
         } catch (Exception e) {
-            return ResultUtils.error(1,"获取流程实例失败");
+            return ResultUtils.error(1, "获取流程实例失败");
         }
 
     }
@@ -222,11 +222,11 @@ public class ActivitiController {
                                      @RequestParam("instanceName") String instanceName) {
 
         try {
-        ProcessInstance processInstance = runtimeService.
-                startProcessInstanceByKey(processDefinitionKey, instanceName);
-        return ResultUtils.success("启动流程实例成功："+processInstance.getProcessInstanceId());
+            ProcessInstance processInstance = runtimeService.
+                    startProcessInstanceByKey(processDefinitionKey, instanceName);
+            return ResultUtils.success("启动流程实例成功：" + processInstance.getProcessInstanceId());
         } catch (Exception e) {
-            return ResultUtils.error(1,"启动流程实例失败");
+            return ResultUtils.error(1, "启动流程实例失败");
         }
     }
 
@@ -238,7 +238,6 @@ public class ActivitiController {
     //删除流程实例
 
     //查询流程参数
-
 
 
 }
