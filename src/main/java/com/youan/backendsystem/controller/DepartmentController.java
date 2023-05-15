@@ -1,5 +1,6 @@
 package com.youan.backendsystem.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.youan.backendsystem.annotation.AuthCheck;
 import com.youan.backendsystem.common.BaseResponse;
@@ -13,9 +14,15 @@ import com.youan.backendsystem.model.dto.department.DepartmentAddRequest;
 import com.youan.backendsystem.model.dto.department.DepartmentQueryRequest;
 import com.youan.backendsystem.model.dto.department.DepartmentUpdateRequest;
 import com.youan.backendsystem.model.entity.Department;
+import com.youan.backendsystem.model.entity.User;
+import com.youan.backendsystem.model.vo.DepartmentVO;
 import com.youan.backendsystem.service.DepartmentService;
+import com.youan.backendsystem.service.UserService;
+import com.youan.backendsystem.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,6 +43,10 @@ public class DepartmentController {
     @Resource
     private DepartmentService departmentService;
 
+    @Resource
+    @Lazy
+    private UserService userService;
+
 
     // region 增删改查
 
@@ -53,10 +64,26 @@ public class DepartmentController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Department department = new Department();
-        BeanUtils.copyProperties(departmentAddRequest, department);
+        department = setDepartmentInfo(departmentAddRequest);
         boolean result = departmentService.save(department);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(department.getId());
+    }
+
+    private Department setDepartmentInfo(DepartmentAddRequest departmentAddRequest) {
+        Department department = new Department();
+        BeanUtils.copyProperties(departmentAddRequest, department);
+        // 根据上级部门名称查询上级部门id
+        Department oldDepartment = departmentService.getOne(new QueryWrapper<Department>()
+                .eq(StringUtils.isNotBlank(departmentAddRequest.getParDepartmentName()), "departmentName", departmentAddRequest.getParDepartmentName()));
+        Long parentId = oldDepartment.getId();
+        // 根据负责人名称查询负责人id
+        User user = userService.getOne(new QueryWrapper<User>()
+                .eq(StringUtils.isNotBlank(departmentAddRequest.getDepartmentHeadName()), "userName", departmentAddRequest.getDepartmentHeadName()));
+        Long userId = user.getId();
+        department.setDepartmentHeadId(userId);
+        department.setParentId(parentId);
+        return department;
     }
 
     /**
@@ -113,6 +140,19 @@ public class DepartmentController {
         long size = departmentQueryRequest.getPageSize();
         Page<Department> userPage = departmentService.page(new Page<>(current, size),
                 departmentService.getQueryWrapper(departmentQueryRequest));
+        return ResultUtils.success(userPage);
+    }
+
+    @PostMapping("/list/vo/page")
+    public BaseResponse<Page<DepartmentVO>> listDepartmentVOByPage(@RequestBody DepartmentQueryRequest departmentQueryRequest,
+                                                                   HttpServletRequest request) {
+        long current = departmentQueryRequest.getCurrent();
+        long size = departmentQueryRequest.getPageSize();
+        Page<Department> departmentPage = departmentService.page(new Page<>(current, size),
+                departmentService.getQueryWrapper(departmentQueryRequest));
+        Page<DepartmentVO> userPage = new Page<>(current, size, departmentPage.getTotal());
+        List<DepartmentVO> departmentVO = departmentService.getDepartmentVO(departmentPage.getRecords());
+        userPage.setRecords(departmentVO);
         return ResultUtils.success(userPage);
     }
 

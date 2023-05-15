@@ -1,10 +1,14 @@
 package com.youan.backendsystem.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.youan.backendsystem.model.dto.department.DepartmentQueryRequest;
 import com.youan.backendsystem.model.entity.Department;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.youan.backendsystem.model.entity.Role;
+import com.youan.backendsystem.model.vo.DepartmentVO;
+
+import java.util.List;
 
 /**
  * @author bobochang
@@ -18,4 +22,7 @@ public interface DepartmentService extends IService<Department> {
 
     // 删除部门信息
     boolean removeDepartment(Long id);
+
+    // 整理返回前端的信息分页
+    List<DepartmentVO> getDepartmentVO(List<Department> departmentPage);
 }

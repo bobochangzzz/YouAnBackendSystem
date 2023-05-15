@@ -19,9 +19,9 @@ import java.util.Date;
 public class DepartmentAddRequest implements Serializable {
 
     /**
-     * 上级部门id
+     * 上级部门名称
      */
-    private Long parentId;
+    private String parDepartmentName;
 
     /**
      * 部门名称
@@ -29,9 +29,9 @@ public class DepartmentAddRequest implements Serializable {
     private String departmentName;
 
     /**
-     * 部门负责人id
+     * 部门负责人名称
      */
-    private Long departmentHeadId;
+    private String departmentHeadName;
 
     /**
      * 联系电话
