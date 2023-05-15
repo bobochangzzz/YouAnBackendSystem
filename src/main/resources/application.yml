@@ -18,7 +18,7 @@ spring:
   # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://120.76.202.229:3306/my_db
+    url: jdbc:mysql://120.76.202.229:3306/my_db?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
     username: root
     password: 123456
   #流程配置
@@ -36,6 +36,7 @@ spring:
     history-level: full
     #检测历史表是否存在 activiti7默认没有开启数据库历史记录 启动数据库历史记录
     db-history-used: true
+    check-process-definitions: false
   # Redis 配置
   # todo 需替换配置，然后取消注释
   #  redis:
