@@ -111,12 +111,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--引入activiti6工作流引擎 -->
-        <dependency>
-            <groupId>org.activiti</groupId>
-            <artifactId>activiti-spring-boot-starter-basic</artifactId>
-            <version>6.0.0</version>
-        </dependency>
     </dependencies>
 
     <build>

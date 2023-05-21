@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youan.backendsystem.mapper.ContractMapper">
+
+    <resultMap id="BaseResultMap" type="com.youan.backendsystem.model.entity.Contract">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="firstParty" column="firstParty" jdbcType="VARCHAR"/>
+        <result property="secondParty" column="secondParty" jdbcType="VARCHAR"/>
+        <result property="projectName" column="projectName" jdbcType="VARCHAR"/>
+        <result property="category" column="category" jdbcType="VARCHAR"/>
+        <result property="quantity" column="quantity" jdbcType="VARCHAR"/>
+        <result property="payMethod" column="payMethod" jdbcType="VARCHAR"/>
+        <result property="colour" column="colour" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,firstParty,secondParty,projectName,category,quantity,payMethod,colour,price,remark,isDelete,
+        createTime,updateTime
+    </sql>
+</mapper>

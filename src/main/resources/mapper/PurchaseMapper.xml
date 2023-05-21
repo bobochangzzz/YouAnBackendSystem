@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youan.backendsystem.mapper.PurchaseMapper">
+
+    <resultMap id="BaseResultMap" type="com.youan.backendsystem.model.entity.Purchase">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="contractId" column="contractId" jdbcType="BIGINT"/>
+        <result property="materials" column="materials" jdbcType="VARCHAR"/>
+        <result property="quantity" column="quantity" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="VARCHAR"/>
+        <result property="provider" column="provider" jdbcType="VARCHAR"/>
+        <result property="applicant" column="applicant" jdbcType="VARCHAR"/>
+        <result property="applicantTime" column="applicantTime" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,contractId,materials,quantity,price,provider,applicant,applicantTime,status,remark,isDelete,
+        createTime,updateTime
+    </sql>
+</mapper>
